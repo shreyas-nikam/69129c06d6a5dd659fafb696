@@ -20,9 +20,10 @@ This application focuses on the **data understanding** aspect of model card gene
 Understanding these aspects of your data is a foundational step in building responsible and fair AI systems. By providing an interactive platform, we aim to make this process intuitive and insightful for users.
 
 All visualizations in this application are interactive and generated using **Plotly**, allowing for dynamic exploration of the data. We also extensively use `st.session_state` to maintain the application's state, ensuring a seamless user experience as you navigate through different analysis steps.
-"""))
+""")
 # Your code starts here
-page = st.sidebar.selectbox(label="Navigation", options=["Data Loading & Exploration", "Distributions & Demographics", "Outliers & Relationships"])
+page = st.sidebar.selectbox(label="Navigation", options=[
+                            "Data Loading & Exploration", "Distributions & Demographics", "Outliers & Relationships"])
 if page == "Data Loading & Exploration":
     from application_pages.page1 import run_page1
     run_page1()
