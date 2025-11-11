@@ -1,20 +1,19 @@
-"""application_pages/page1.py"""
-import pandas as pd
+
 import streamlit as st
+import pandas as pd
 
 @st.cache_data
 def load_data(uploaded_file):
     if uploaded_file is not None:
         try:
-            # Determine file type and read accordingly
+            # Determine file type and load accordingly
             if uploaded_file.name.endswith('.csv'):
                 df = pd.read_csv(uploaded_file)
-            elif uploaded_file.name.endswith(('.xlsx', '.xls')):
+            elif uploaded_file.name.endswith(tuple([".xls", ".xlsx"])):
                 df = pd.read_excel(uploaded_file)
             else:
                 st.error("Unsupported file type. Please upload a CSV or Excel file.")
                 return None
-
             st.success("Dataset loaded successfully!")
             return df
         except Exception as e:
@@ -23,45 +22,39 @@ def load_data(uploaded_file):
     return None
 
 def run_page1():
-    st.header("Page 1: Data Loading & Exploration")
     st.markdown("""
     ### Data Loading and Initial Exploration
     This section allows you to load your dataset and get a first look at its structure and basic statistics.
-    Upload your data to begin the analysis. The application supports CSV and Excel files.
-    """)
+    """).replace("```", "\`\`\`")
 
-    uploaded_file = st.file_uploader("Upload your dataset (CSV, Excel)", type=["csv", "xlsx", "xls"])
+    st.sidebar.subheader("Upload Dataset")
+    uploaded_file = st.sidebar.file_uploader("Upload your dataset (CSV, Excel)", type=["csv", "xlsx"])
+
+    if "df" not in st.session_state:
+        st.session_state.df = None
 
     if uploaded_file is not None:
-        df = load_data(uploaded_file)
-        if df is not None:
-            st.session_state['df'] = df  # Store DataFrame in session state
-            st.success("Dataset successfully loaded and stored in session!")
+        if st.sidebar.button("Load Data"):
+            st.session_state.df = load_data(uploaded_file)
 
-            st.subheader("Dataset Preview (First 5 Rows)")
-            st.dataframe(df.head())
+    if st.session_state.df is not None:
+        df = st.session_state.df
+        st.subheader("Dataset Preview")
+        st.dataframe(df.head())
 
-            st.subheader("Dataset Information")
-            st.markdown("""
-            The `df.describe()` method provides a summary of the central tendency, dispersion, and shape of a dataset's distribution, excluding `NaN` values.
-            """)
-            st.dataframe(df.describe())
+        st.subheader("Dataset Information")
+        st.markdown(f"**Number of rows:** {df.shape[0]} | **Number of columns:** {df.shape[1]}")
 
-            st.subheader("Missing Values per Column")
-            st.markdown("""
-            Identifying missing values is crucial for data cleaning and preprocessing. High counts of missing values in a column may indicate a need for imputation or feature engineering.
-            """)
-            missing_values = df.isnull().sum().to_frame(name='Missing Values')
-            missing_values = missing_values[missing_values['Missing Values'] > 0]
-            if not missing_values.empty:
-                st.dataframe(missing_values)
-            else:
-                st.info("No missing values found in the dataset.")
+        st.markdown("#### Basic Statistics (`df.describe()`)")
+        st.dataframe(df.describe())
 
-            st.subheader("Data Types")
-            st.markdown("""
-            Understanding the data types of each column helps in selecting appropriate visualizations and analysis methods.
-            """)
-            st.dataframe(df.dtypes.to_frame(name='Data Type'))
+        st.markdown("#### Missing Values per Column")
+        missing_values = df.isnull().sum().to_frame(name='Missing Values')
+        missing_values['Percentage'] = (missing_values['Missing Values'] / len(df)) * 100
+        st.dataframe(missing_values.style.format({"Percentage": "{:.2f}%"}))
+
+        st.markdown("#### Data Types")
+        st.dataframe(df.dtypes.astype(str).to_frame(name='Data Type'))
+
     else:
-        st.info("Please upload a dataset to proceed.")
+        st.info("Please upload a dataset using the sidebar to begin.")
