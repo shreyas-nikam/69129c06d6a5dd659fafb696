@@ -1,38 +1,35 @@
-"""app.py"""
+
 import streamlit as st
-st.set_page_config(page_title="QuLab - Model Card Generator", layout="wide")
+st.set_page_config(page_title="QuLab", layout="wide")
 st.sidebar.image("https://www.quantuniversity.com/assets/img/logo5.jpg")
 st.sidebar.divider()
 st.title("QuLab")
 st.divider()
 st.markdown("""
-In this lab, we will explore the **Model Card Generator**, a tool designed to help users understand, analyze, and document their machine learning models comprehensively. A model card provides a structured way to report on a model's characteristics, performance, and ethical considerations.
+In this lab, we present a "Model Card Generator" application, an interactive tool designed to help users understand, visualize, and analyze datasets for potential biases and demographic representation. Model cards provide a structured way to document the intended uses, performance characteristics, and ethical considerations of machine learning models.
 
-### Why Model Cards?
-Model cards enhance transparency and accountability in AI systems. They serve as essential documentation for model developers, deployers, and end-users, ensuring that the models are used responsibly and effectively. Key aspects include:
+This application focuses on the **data understanding** aspect of model card generation. Before a model can be built and documented, it is crucial to thoroughly understand the underlying dataset. This involves:
 
-*   **Transparency**: Clearly documenting how a model was built, what data it was trained on, and its intended use cases.
-*   **Accountability**: Providing a record of potential biases, limitations, and performance metrics across different demographic groups.
-*   **Risk Mitigation**: Helping identify and address potential fairness, privacy, and security concerns before deployment.
+*   **Initial Data Exploration**: Getting a first look at the dataset's structure, summary statistics, and identifying missing values.
+*   **Data Distribution Analysis**: Visualizing how numerical features are distributed, which can reveal skewness, outliers, or multimodal patterns.
+*   **Demographic Representation**: Examining the proportions of different categories within demographic features to identify potential imbalances that could lead to biased model outcomes.
+*   **Outlier Detection**: Using statistical plots to identify unusual data points that might impact model training.
+*   **Feature Relationships**: Understanding how different features interact with each other, which is crucial for feature engineering and model interpretation.
+*   **Bias Detection and Summary Insights**: A dedicated section to interpret findings and discuss potential biases, their impact on model performance, and mitigation strategies.
 
-### Lab Structure
-This interactive Streamlit application is divided into several pages, each focusing on a different aspect of data analysis and model understanding crucial for generating a comprehensive model card:
+Understanding these aspects of your data is a foundational step in building responsible and fair AI systems. By providing an interactive platform, we aim to make this process intuitive and insightful for users.
 
-*   **Page 1: Data Loading & Exploration**: Load your datasets, preview their structure, and understand basic statistics.
-*   **Page 2: Data Distribution & Demographic Representation**: Visualize data distributions using histograms and analyze demographic representation with pie charts.
-*   **Page 3: Outlier Detection, Feature Relationships & Bias Insights**: Identify outliers with box plots, explore feature relationships using scatter plots, and delve into conceptual bias detection.
-
-Throughout the lab, we will emphasize interactive visualizations using **Plotly** and clear explanations to foster a deeper understanding of your data and its implications for model development.
-""")
+All visualizations in this application are interactive and generated using **Plotly**, allowing for dynamic exploration of the data. We also extensively use `st.session_state` to maintain the application's state, ensuring a seamless user experience as you navigate through different analysis steps.
+"""))
 # Your code starts here
-page = st.sidebar.selectbox(label="Navigation", options=["Data Loading & Exploration", "Data Distribution & Demographic Representation", "Outlier Detection, Feature Relationships & Bias Insights"])
+page = st.sidebar.selectbox(label="Navigation", options=["Data Loading & Exploration", "Distributions & Demographics", "Outliers & Relationships"])
 if page == "Data Loading & Exploration":
     from application_pages.page1 import run_page1
     run_page1()
-elif page == "Data Distribution & Demographic Representation":
+elif page == "Distributions & Demographics":
     from application_pages.page2 import run_page2
     run_page2()
-elif page == "Outlier Detection, Feature Relationships & Bias Insights":
+elif page == "Outliers & Relationships":
     from application_pages.page3 import run_page3
     run_page3()
 # Your code ends
